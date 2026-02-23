@@ -1,185 +1,119 @@
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local CoreGui = game:GetService("CoreGui")
-local Camera = workspace.CurrentCamera
-local LocalPlayer = Players.LocalPlayer
+--=============================================================================
+-- 1. PLATOBOOST LIBRARY (Система ключів) [cite: 7]
+--=============================================================================
+local service = 21337; [cite: 8]
+local secret = "6cdf2b5c-4b91-4360-a991-ce70f332244b"; [cite: 9]
+local useNonce = true; [cite: 10]
 
-local NL_COLOR = {
-    MainBG = Color3.fromRGB(8, 8, 12),
-    SideBG = Color3.fromRGB(5, 5, 8),
-    SectionBG = Color3.fromRGB(13, 13, 20),
-    Accent = Color3.fromRGB(0, 170, 255),
-    Text = Color3.fromRGB(255, 255, 255),
-    TextDark = Color3.fromRGB(140, 140, 145)
-}
+-- Налаштування сповіщень [cite: 68]
+local onMessage = function(message)
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Platoboost Status",
+        Text = message,
+        Duration = 5
+    })
+end;
 
-local MASTER_ESP, BOX_ENABLED, NAME_ENABLED, DIST_ENABLED, SNAP_ENABLED = false, true, true, true, false
-local ui_visible = true 
-local running, espObjects = true, {}
+-- (Тут іде внутрішня логіка Platoboost, яку ти скинув у файлі) [cite: 7, 12]
+local a=2^32;local b=a-1;local function c(d,e)local f,g=0,1;while d~=0 or e~=0 do local h,i=d%2,e%2;local j=(h+i)%2;f=f+j*g;d=math.floor(d/2)e=math.floor(e/2)g=g*2 end;return f%a end;local function k(d,e,l,...)local m;if e then d=d%a;e=e%a;m=c(d,e)if l then m=k(m,l,...)end;return m elseif d then return d%a else return 0 end end;local function n(d,e,l,...)local m;if e then d=d%a;e=e%a;m=(d+e-c(d,e))/2;if l then m=n(m,l,...)end;return m elseif d then return d%a else return b end end;local function o(p)return b-p end;local function q(d,r)if r<0 then return lshift(d,-r)end;return math.floor(d%2^32/2^r)end;local function s(p,r)if r>31 or r<-31 then return 0 end;return q(p%a,r)end;local function lshift(d,r)if r<0 then return s(d,-r)end;return d*2^r%2^32 end;local function t(p,r)p=p%a;r=r%32;local u=n(p,2^r-1)return s(p,r)+lshift(u,32-r)end;local v={0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2}local function w(x)return string.gsub(x,".",function(l)return string.format("%02x",string.byte(l))end)end;local function y(z,A)local x=""for B=1,A do local C=z%256;x=string.char(C)..x;z=(z-C)/256 end;return x end;local function D(x,B)local A=0;for B=B,B+3 do A=A*256+string.byte(x,B)end;return A end;local function E(F,G)local H=64-(G+9)%64;G=y(8*G,8)F=F.."\128"..string.rep("\0",H)..G;assert(#F%64==0)return F end;local function I(J)J[1]=0x6a09e667;J[2]=0xbb67ae85;J[3]=0x3c6ef372;J[4]=0xa54ff53a;J[5]=0x510e527f;J[6]=0x9b05688c;J[7]=0x1f83d9ab;J[8]=0x5be0cd19;return J end;local function K(F,B,J)local L={}for M=1,16 do L[M]=D(F,B+(M-1)*4)end;for M=17,64 do local N=L[M-15]local O=k(t(N,7),t(N,18),s(N,3))N=L[M-2]L[M]=(L[M-16]+O+L[M-7]+k(t(N,17),t(N,19),s(N,10)))%a end;local d,e,l,P,Q,R,S,T=J[1],J[2],J[3],J[4],J[5],J[6],J[7],J[8]for B=1,64 do local O=k(t(d,2),t(d,13),t(d,22))local U=k(n(d,e),n(d,l),n(e,l))local V=(O+U)%a;local W=k(t(Q,6),t(Q,11),t(Q,25))local X=k(n(Q,R),n(o(Q),S))local Y=(T+W+X+v[B]+L[B])%a;T=S;S=R;R=Q;Q=(P+Y)%a;P=l;l=e;e=d;d=(Y+V)%a end;J[1]=(J[1]+d)%a;J[2]=(J[2]+e)%a;J[3]=(J[3]+l)%a;J[4]=(J[4]+P)%a;J[5]=(J[5]+Q)%a;J[6]=(J[6]+R)%a;J[7]=(J[7]+S)%a;J[8]=(J[8]+T)%a end;local function Z(F)F=E(F,#F)local J=I({})for B=1,#F,64 do K(F,B,J)end;return w(y(J[1],4)..y(J[2],4)..y(J[3],4)..y(J[4],4)..y(J[5],4)..y(J[6],4)..y(J[7],4)..y(J[8],4))end;local a3=function(M) local function e(M,z) local x=type(M) if x=="table" then local _={} for Q,R in pairs(M) do table.insert(_, '"'..Q..'":'..e(R)) end return "{"..table.concat(_,",").."}" elseif x=="string" then return '"'..M..'"' else return tostring(M) end end return e(M) end;local aw=function(a8) return game:GetService("HttpService"):JSONDecode(a8) end;local lEncode, lDecode, lDigest = a3, aw, Z;
 
-local TOGGLE_KEY = Enum.KeyCode.Delete
-local is_binding = false
+repeat task.wait(1) until game:IsLoaded(); [cite: 11]
 
-local function silentRemoveESP(player)
-    if espObjects[player] then
-        for _, obj in pairs(espObjects[player]) do obj.Visible = false end
+local fSetClipboard, fRequest, fGetHwid = setclipboard or toclipboard, request or http_request or syn_request, gethwid or function() return game:GetService("Players").LocalPlayer.UserId end [cite: 12]
+local host = "https://api.platoboost.com"; [cite: 13]
+
+function copyLink() [cite: 65]
+    local response = fRequest({Url = host .. "/public/start", Method = "POST", Body = lEncode({service = service, identifier = lDigest(fGetHwid())}), Headers = {["Content-Type"] = "application/json"}}); [cite: 16]
+    if response.StatusCode == 200 then
+        local decoded = lDecode(response.Body); [cite: 17]
+        if decoded.success then fSetClipboard(decoded.data.url) onMessage("Посилання скопійовано!") end [cite: 18, 27]
     end
 end
-Players.PlayerRemoving:Connect(silentRemoveESP)
 
-local espLoop
-espLoop = RunService.RenderStepped:Connect(function()
-    if not running then 
-        for p, _ in pairs(espObjects) do silentRemoveESP(p) end
-        espLoop:Disconnect()
-        return 
+function verifyKey(key) [cite: 66]
+    local endpoint = host .. "/public/whitelist/" .. tostring(service) .. "?identifier=" .. lDigest(fGetHwid()) .. "&key=" .. key; [cite: 42]
+    local response = fRequest({Url = endpoint, Method = "GET"}); [cite: 44]
+    if response.StatusCode == 200 then
+        local decoded = lDecode(response.Body); [cite: 45]
+        return decoded.success and decoded.data.valid; [cite: 46]
     end
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer then
-            if not espObjects[player] then
-                espObjects[player] = {
-                    Box = Drawing.new("Square"), BgBar = Drawing.new("Square"), HpBar = Drawing.new("Square"),
-                    Name = Drawing.new("Text"), Dist = Drawing.new("Text"), Snap = Drawing.new("Line")
-                }
-                local o = espObjects[player]
-                o.Box.Color = NL_COLOR.Accent; o.Box.Thickness = 1.5; o.Box.Transparency = 1
-                o.BgBar.Color = Color3.new(0,0,0); o.BgBar.Filled = true
-                o.HpBar.Filled = true
-                o.Name.Color = NL_COLOR.Text; o.Name.Size = 13; o.Name.Center = true; o.Name.Outline = true; o.Name.Font = 3
-                o.Dist.Color = NL_COLOR.Text; o.Dist.Size = 13; o.Dist.Center = true; o.Dist.Outline = true; o.Dist.Font = 3
-                o.Snap.Color = NL_COLOR.Accent; o.Snap.Thickness = 1; o.Snap.Transparency = 0.5
+    return false;
+end
+
+--=============================================================================
+-- 2. ГРАФІЧНИЙ ІНТЕРФЕЙС (Orion Library)
+--=============================================================================
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({
+    Name = "Tpa Simulator Hub | Monetized", 
+    HidePremium = false, 
+    SaveConfig = true, 
+    ConfigFolder = "TpaConfig",
+    KeySystem = true, -- Вмикаємо вбудовану систему ключів 
+    KeySettings = {
+        Title = "Система ключів Platoboost",
+        Subtitle = "Пройдіть посилання для доступу",
+        Note = "Натисніть 'Get Key', щоб скопіювати посилання",
+        FileName = "TpaKey",
+        SaveKey = true,
+        GrabKeyFromSite = false,
+        Key = {"Placeholder"}, -- Ми замінимо перевірку в Callback
+        CustomCheck = function(enteredKey)
+            return verifyKey(enteredKey) -- Викликаємо нашу функцію перевірки [cite: 70]
+        end
+    }
+})
+
+-- Додаємо кнопку "Отримати ключ" окремо для зручності
+OrionLib:MakeNotification({Name = "Інфо", Content = "Натисніть кнопку в меню, щоб отримати посилання!", Time = 5})
+
+--=============================================================================
+-- 3. ФУНКЦІЇ СКРИПТА (Tpa Simulator)
+--=============================================================================
+local FarmTab = Window:MakeTab({Name = "Фарм", Icon = "rbxassetid://4483345998"})
+
+_G.AutoClick = false
+_G.AutoRebirth = false
+
+FarmTab:AddToggle({
+    Name = "Авто-клікер",
+    Default = false,
+    Callback = function(Value)
+        _G.AutoClick = Value
+        task.spawn(function()
+            while _G.AutoClick do
+                -- Приклад події кліку (зміни на актуальну для гри)
+                local event = game:GetService("ReplicatedStorage"):FindFirstChild("ClickEvent", true)
+                if event then event:FireServer() end
+                task.wait(0.1)
             end
-            local o, char = espObjects[player], player.Character
-            local root = char and (char:FindFirstChild("HumanoidRootPart") or char.PrimaryPart)
-            local hum = char and char:FindFirstChildOfClass("Humanoid")
-            local isEnemy = (player.Team ~= LocalPlayer.Team)
-            if MASTER_ESP and root and isEnemy and hum and hum.Health > 0 then
-                local rootPos, onScreen = Camera:WorldToViewportPoint(root.Position)
-                if onScreen then
-                    local fovScale = 70 / Camera.FieldOfView 
-                    local size = (2500 / rootPos.Z) * fovScale
-                    local boxW, boxH = math.floor(size), math.floor(size * 1.5)
-                    local boxX, boxY = math.floor(rootPos.X - boxW/2), math.floor(rootPos.Y - boxH/2)
-                    if BOX_ENABLED then
-                        o.Box.Size = Vector2.new(boxW, boxH); o.Box.Position = Vector2.new(boxX, boxY); o.Box.Visible = true
-                        local hpP = hum.Health / hum.MaxHealth
-                        o.BgBar.Size = Vector2.new(4, boxH + 2); o.BgBar.Position = Vector2.new(boxX - 6, boxY - 1); o.BgBar.Visible = true
-                        local hpSize = math.floor(boxH * hpP)
-                        o.HpBar.Size = Vector2.new(2, hpSize); o.HpBar.Position = Vector2.new(boxX - 5, boxY + boxH - hpSize)
-                        o.HpBar.Color = Color3.fromRGB(255 - (hpP * 255), hpP * 255, 0); o.HpBar.Visible = true
-                    else o.Box.Visible = false; o.BgBar.Visible = false; o.HpBar.Visible = false end
-                    if NAME_ENABLED then o.Name.Text = player.Name; o.Name.Position = Vector2.new(boxX + boxW/2, boxY - 16); o.Name.Visible = true else o.Name.Visible = false end
-                    if DIST_ENABLED then o.Dist.Text = math.floor((Camera.CFrame.Position - root.Position).Magnitude) .. "m"; o.Dist.Position = Vector2.new(boxX + boxW/2, boxY + boxH + 2); o.Dist.Visible = true else o.Dist.Visible = false end
-                    if SNAP_ENABLED then o.Snap.From = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y); o.Snap.To = Vector2.new(boxX + boxW/2, boxY + boxH); o.Snap.Visible = true else o.Snap.Visible = false end
-                else for _, obj in pairs(o) do obj.Visible = false end end
-            else for _, obj in pairs(o) do obj.Visible = false end end
-        end
+        end)
     end
-end)
+})
 
-local MenuGui = Instance.new("ScreenGui")
-MenuGui.ResetOnSpawn = false; MenuGui.DisplayOrder = 9999
-pcall(function() MenuGui.Parent = CoreGui end)
-if not MenuGui.Parent then MenuGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
-
-local Main = Instance.new("Frame", MenuGui)
-Main.Size = UDim2.new(0, 480, 0, 320); Main.Position = UDim2.new(0.5, -240, 0.5, -160)
-Main.BackgroundColor3 = NL_COLOR.MainBG; Main.BorderSizePixel = 0; Main.Draggable = true; Main.Active = true
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 4)
-
-local BindBtn = Instance.new("TextButton", Main)
-BindBtn.Size = UDim2.new(0, 100, 0, 25)
-BindBtn.Position = UDim2.new(1, -110, 1, -35)
-BindBtn.BackgroundColor3 = NL_COLOR.SectionBG
-BindBtn.BorderSizePixel = 0
-BindBtn.Text = "[" .. TOGGLE_KEY.Name .. "]"
-BindBtn.TextColor3 = NL_COLOR.TextDark
-BindBtn.Font = "GothamSemibold"; BindBtn.TextSize = 11
-Instance.new("UICorner", BindBtn).CornerRadius = UDim.new(0, 4)
-
-local BindLabel = Instance.new("TextLabel", Main)
-BindLabel.Size = UDim2.new(0, 100, 0, 15)
-BindLabel.Position = UDim2.new(1, -110, 1, -50)
-BindLabel.BackgroundTransparency = 1
-BindLabel.Text = "Menu Keybind"
-BindLabel.TextColor3 = NL_COLOR.TextDark
-BindLabel.Font = "GothamBold"; BindLabel.TextSize = 10; BindLabel.TextXAlignment = "Center"
-
-BindBtn.MouseButton1Click:Connect(function()
-    is_binding = true
-    BindBtn.Text = "..."
-    BindBtn.TextColor3 = NL_COLOR.Accent
-end)
-
-UserInputService.InputBegan:Connect(function(input, gpe)
-    if is_binding then
-        if input.UserInputType == Enum.UserInputType.Keyboard then
-            TOGGLE_KEY = input.KeyCode
-            BindBtn.Text = "[" .. TOGGLE_KEY.Name .. "]"
-            BindBtn.TextColor3 = NL_COLOR.TextDark
-            is_binding = false
-        end
-        return
+FarmTab:AddToggle({
+    Name = "Авто-ребіртх",
+    Default = false,
+    Callback = function(Value)
+        _G.AutoRebirth = Value
+        task.spawn(function()
+            while _G.AutoRebirth do
+                local event = game:GetService("ReplicatedStorage"):FindFirstChild("RebirthEvent", true)
+                if event then event:FireServer() end
+                task.wait(1)
+            end
+        end)
     end
-    if not gpe and input.KeyCode == TOGGLE_KEY then
-        ui_visible = not ui_visible
-        Main.Visible = ui_visible
+})
+
+local KeyTab = Window:MakeTab({Name = "Система ключів", Icon = "rbxassetid://4483345998"})
+
+KeyTab:AddButton({
+    Name = "Отримати посилання (Get Key)",
+    Callback = function()
+        copyLink() [cite: 65]
     end
-end)
+})
 
-local LogoContainer = Instance.new("Frame", Main)
-LogoContainer.Size = UDim2.new(0, 100, 0, 35); LogoContainer.BackgroundTransparency = 1
-local TopLine = Instance.new("Frame", LogoContainer)
-TopLine.Size = UDim2.new(1, 0, 0, 2); TopLine.BackgroundColor3 = NL_COLOR.Accent; TopLine.BorderSizePixel = 0
-Instance.new("UICorner", TopLine).CornerRadius = UDim.new(0, 4)
-local LogoText = Instance.new("TextLabel", LogoContainer)
-LogoText.Size = UDim2.new(1, 0, 1, 0); LogoText.Position = UDim2.new(0, 10, 0, 2); LogoText.BackgroundTransparency = 1; LogoText.Text = "NEVERLOSE.CC"; LogoText.TextColor3 = NL_COLOR.Text; LogoText.Font = "GothamBold"; LogoText.TextSize = 13; LogoText.TextXAlignment = "Left"
-
-local Sidebar = Instance.new("Frame", Main)
-Sidebar.Size = UDim2.new(0, 100, 1, -35); Sidebar.Position = UDim2.new(0, 0, 0, 35); Sidebar.BackgroundColor3 = NL_COLOR.SideBG; Sidebar.BorderSizePixel = 0
-Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 4)
-local TabHolder = Instance.new("Frame", Sidebar); TabHolder.Size = UDim2.new(1, 0, 1, 0); TabHolder.BackgroundTransparency = 1
-local TabLayout = Instance.new("UIListLayout", TabHolder); TabLayout.HorizontalAlignment = "Center"; TabLayout.Padding = UDim.new(0, 5)
-Instance.new("UIPadding", TabHolder).PaddingTop = UDim.new(0, 10)
-
-local function createTab(name, active)
-    local t = Instance.new("TextButton", TabHolder)
-    t.Size = UDim2.new(1, -20, 0, 30); t.BackgroundTransparency = 1; t.Text = name; t.Font = "GothamSemibold"; t.TextSize = 13; t.TextColor3 = active and NL_COLOR.Accent or NL_COLOR.TextDark; t.TextXAlignment = "Left"
-    return t
-end
-local tVisuals = createTab("Visuals", true); local tMisc = createTab("Misc", false)
-
-local Pages = Instance.new("Frame", Main); Pages.Size = UDim2.new(1, -115, 1, -45); Pages.Position = UDim2.new(0, 110, 0, 40); Pages.BackgroundTransparency = 1
-local VisualsPage = Instance.new("ScrollingFrame", Pages); VisualsPage.Size = UDim2.new(1, 0, 1, 0); VisualsPage.BackgroundTransparency = 1; VisualsPage.ScrollBarThickness = 0
-local MiscPage = Instance.new("Frame", Pages); MiscPage.Size = UDim2.new(1, 0, 1, 0); MiscPage.BackgroundTransparency = 1; MiscPage.Visible = false
-
--- [ESP Sections]
-local function createNLSection(parent, title)
-    local sect = Instance.new("Frame", parent); sect.Size = UDim2.new(1, 0, 0, 40); sect.BackgroundColor3 = NL_COLOR.SectionBG; sect.BorderSizePixel = 0
-    Instance.new("UICorner", sect).CornerRadius = UDim.new(0, 4)
-    local top = Instance.new("Frame", sect); top.Size = UDim2.new(1, 0, 0, 40); top.BackgroundTransparency = 1
-    local label = Instance.new("TextLabel", top); label.Size = UDim2.new(1, -60, 1, 0); label.Position = UDim2.new(0, 12, 0, 0); label.BackgroundTransparency = 1; label.Text = title:upper(); label.TextColor3 = NL_COLOR.Text; label.Font = "GothamBold"; label.TextSize = 11; label.TextXAlignment = "Left"
-    local sw = Instance.new("TextButton", top); sw.Size = UDim2.new(0, 28, 0, 14); sw.Position = UDim2.new(1, -40, 0, 13); sw.BackgroundColor3 = Color3.fromRGB(35, 35, 45); sw.Text = ""; Instance.new("UICorner", sw)
-    local d = Instance.new("Frame", sw); d.Size = UDim2.new(0, 10, 0, 10); d.Position = UDim2.new(0, 2, 0, 2); d.BackgroundColor3 = Color3.fromRGB(90, 90, 95); Instance.new("UICorner", d)
-    local isExpanded, content = false, Instance.new("Frame", sect); content.Size = UDim2.new(1, 0, 0, 140); content.Position = UDim2.new(0, 0, 0, 40); content.Visible = false; content.BackgroundTransparency = 1
-    sw.MouseButton1Click:Connect(function() MASTER_ESP = not MASTER_ESP; d:TweenPosition(MASTER_ESP and UDim2.new(0, 16, 0, 2) or UDim2.new(0, 2, 0, 2), "Out", "Quad", 0.1, true); d.BackgroundColor3 = MASTER_ESP and NL_COLOR.Accent or Color3.fromRGB(90, 90, 95) end)
-    top.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then isExpanded = not isExpanded; sect.Size = isExpanded and UDim2.new(1, 0, 0, 180) or UDim2.new(1, 0, 0, 40); content.Visible = isExpanded end end)
-    return content
-end
-local espSect = createNLSection(VisualsPage, "Enemy ESP")
-
-local function addNLToggle(parent, text, y, default, callback)
-    local t = Instance.new("TextButton", parent); t.Size = UDim2.new(1, 0, 0, 30); t.Position = UDim2.new(0, 12, 0, y); t.BackgroundTransparency = 1; t.Text = text; t.TextColor3 = default and NL_COLOR.Text or NL_COLOR.TextDark; t.Font = "GothamSemibold"; t.TextSize = 12; t.TextXAlignment = "Left"
-    local b = Instance.new("Frame", t); b.Size = UDim2.new(0, 12, 0, 12); b.Position = UDim2.new(1, -40, 0, 9); b.BackgroundColor3 = default and NL_COLOR.Accent or Color3.fromRGB(30, 30, 40); Instance.new("UICorner", b)
-    t.MouseButton1Click:Connect(function() default = not default; callback(default); b.BackgroundColor3 = default and NL_COLOR.Accent or Color3.fromRGB(30, 30, 40); t.TextColor3 = default and NL_COLOR.Text or NL_COLOR.TextDark end)
-end
-addNLToggle(espSect, "Box ESP", 5, true, function(s) BOX_ENABLED = s end); addNLToggle(espSect, "Name ESP", 35, true, function(s) NAME_ENABLED = s end); addNLToggle(espSect, "Distance", 65, true, function(s) DIST_ENABLED = s end); addNLToggle(espSect, "Snaplines", 95, false, function(s) SNAP_ENABLED = s end)
-
--- [Misc Page - Safe Exit]
-local unl = Instance.new("TextButton", MiscPage)
-unl.Size = UDim2.new(1, 0, 0, 40); unl.Position = UDim2.new(0,0,0,10); unl.BackgroundColor3 = NL_COLOR.SectionBG; unl.Text = "Silent Unload"; unl.TextColor3 = Color3.new(1, 0.3, 0.3); unl.Font = "GothamBold"; Instance.new("UICorner", unl)
-unl.MouseButton1Click:Connect(function() running = false; MASTER_ESP = false; Main.Visible = false; MenuGui.Enabled = false end)
-
-tVisuals.MouseButton1Click:Connect(function() VisualsPage.Visible = true; MiscPage.Visible = false; tVisuals.TextColor3 = NL_COLOR.Accent; tMisc.TextColor3 = NL_COLOR.TextDark end)
-tMisc.MouseButton1Click:Connect(function() VisualsPage.Visible = false; MiscPage.Visible = true; tVisuals.TextColor3 = NL_COLOR.TextDark; tMisc.TextColor3 = NL_COLOR.Accent end)
+OrionLib:Init()
